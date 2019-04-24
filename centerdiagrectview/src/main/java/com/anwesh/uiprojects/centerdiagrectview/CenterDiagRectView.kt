@@ -13,6 +13,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 
 val nodes : Int = 5
 val lines : Int = 4
@@ -25,8 +26,8 @@ val backColor : Int = Color.parseColor("#BDBDBD")
 val rectHFactor : Float = 4f
 
 fun Int.inverse() : Float = 1f / this
-fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n)
-fun Float.divideScale(i : Int, n : Int) : Float = Math.max(n.inverse(), maxScale(i, n)) * n
+fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
+fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale(i, n)) * n
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 fun Float.mirrorValue(a : Int, b : Int) : Float {
     val k : Float = scaleFactor()
@@ -49,14 +50,15 @@ fun Canvas.drawCDRNode(i : Int, scale : Float, paint : Paint) {
     paint.style = Paint.Style.STROKE
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
+    val angle : Float = Math.atan(1.0 / rectHFactor).toFloat() * 180f / Math.PI.toFloat()
+    Log.d("angle", "$angle")
     save()
     translate(w / 2, gap * (i + 1))
     rotate(90f * sc2)
     drawRect(RectF(-size, -size / rectHFactor, size, size / rectHFactor), paint)
     for (j in 0..(lines - 1)) {
         save()
-        rotate(90f * j)
-        drawCenterDiag(-size, -size / rectHFactor, sc1.divideScale(j, lines), paint)
+        drawCenterDiag(size * (1f - 2 * (j / 2)), -size / rectHFactor * (1f - 2 * (j % 2)), sc1.divideScale(j, lines), paint)
         restore()
     }
     restore()
@@ -84,6 +86,7 @@ class CenterDiagRectView(ctx : Context) : View(ctx) {
 
         fun update(cb : (Float) -> Unit) {
             scale += scale.updateValue(dir, lines, 1)
+            Log.d("scale", "$scale")
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
