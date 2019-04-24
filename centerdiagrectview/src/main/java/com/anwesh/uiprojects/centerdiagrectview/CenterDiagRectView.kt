@@ -217,4 +217,13 @@ class CenterDiagRectView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : CenterDiagRectView {
+            val view : CenterDiagRectView = CenterDiagRectView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
