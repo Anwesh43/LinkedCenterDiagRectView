@@ -45,7 +45,7 @@ fun Canvas.drawCDRNode(i : Int, scale : Float, paint : Paint) {
     paint.strokeCap = Paint.Cap.ROUND
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     paint.color = foreColor
-    paint.style = Paint.Style.STROKE 
+    paint.style = Paint.Style.STROKE
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
     save()
@@ -59,4 +59,22 @@ fun Canvas.drawCDRNode(i : Int, scale : Float, paint : Paint) {
         restore()
     }
     restore()
+}
+
+class CenterDiagRectView(ctx : Context) : View(ctx) {
+
+    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    override fun onDraw(canvas : Canvas) {
+
+    }
+
+    override fun onTouchEvent(event : MotionEvent) : Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+
+            }
+        }
+        return true
+    }
 }
