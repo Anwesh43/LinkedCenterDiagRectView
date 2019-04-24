@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.centerdiagrectview
  * Created by anweshmishra on 24/04/19.
  */
 
+import android.animation.Animator
 import android.view.View
 import android.view.MotionEvent
 import android.app.Activity
@@ -98,7 +99,7 @@ class CenterDiagRectView(ctx : Context) : View(ctx) {
         }
     }
 
-    data class Aniamtor(var view : View, var animated : Boolean = false) {
+    data class Animator(var view : View, var animated : Boolean = false) {
 
         fun animate(cb : () -> Unit) {
             if (animated) {
@@ -191,6 +192,28 @@ class CenterDiagRectView(ctx : Context) : View(ctx) {
 
         fun startUpdating(cb : () -> Unit) {
             curr.startUpdating(cb)
+        }
+    }
+
+    data class Renderer(var view : CenterDiagRectView) {
+
+        private val animator : Animator = Animator(view)
+        private val cdr : CenterDiagRect = CenterDiagRect(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            cdr.draw(canvas, paint)
+            animator.animate {
+                cdr.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            cdr.startUpdating {
+                animator.start()
+            }
         }
     }
 }
